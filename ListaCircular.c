@@ -55,10 +55,16 @@ void ListaInsere(Lista *l, char c, int i){
     }
     if(l->tam == 1){
         novo->c=c;
-        novo->prox=l->ult;
-        aux = l->ult;
-        aux = aux->prox;
-        aux->prox = novo;
+        if(i==2){
+            novo->prox=l->ult;
+            aux = l->ult->prox;
+            aux->prox = novo;
+            }
+        if(i==1){
+            aux=l->ult->prox;
+            l->ult->prox = novo;
+            novo->prox=aux;
+        }
     }
     if(l->tam > 1){
 
@@ -146,17 +152,14 @@ int main()
 
 
     Imprime(&l);
+
     ListaInsere(&l, 'c', 1);
-    //printf("%c\n", l.ult->prox->c);
     Imprime(&l);
 
-    ListaInsere(&l, 'd', 2);
+    ListaInsere(&l, 'd', 1);
     Imprime(&l);
 
-    ListaInsere(&l, 'f', 3);
-    Imprime(&l);
-    ListaRemove(&l, 2);
-    Imprime(&l);
+
 
 
 
