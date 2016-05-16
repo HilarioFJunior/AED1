@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#define MAX 50001
 
 typedef struct Celula *PonteiroCelula;
 
@@ -17,7 +19,7 @@ struct Lista{
 
 typedef struct Lista Lista;
 
-/**/
+
 
 void ListaCria(Lista *l){
     PonteiroCelula aux;
@@ -49,7 +51,6 @@ void ListaInsere(Lista *l, char c, int i){
     if(l->tam == 0){
 
         novo->c = c;
-        printf("novo->c = %c, c = %c\n", novo->c, c);
         novo->prox = l->ult;
         l->ult->prox = novo;
     }
@@ -106,6 +107,12 @@ char ListaRemove(Lista *l, int i){
     aux=(Celula*)malloc(sizeof(Celula));
     anterior=(Celula*)malloc(sizeof(Celula));
 
+    if(i==1){
+        aux=l->ult->prox;
+        c=l->ult->prox->c;
+        l->ult->prox=aux->prox;
+    }
+    else{
     aux = l->ult;
 
     for(j=1;j<=i;j++){
@@ -117,9 +124,9 @@ char ListaRemove(Lista *l, int i){
     anterior->prox = aux->prox;
 
     c = aux->c;
+    }
 
-    //free(anterior);
-    //free(aux);
+
     l->tam--;
     return c;
 }
@@ -145,13 +152,25 @@ char ListaRetorna(Lista* l, int i){
     return c;
 }
 
-void Imprime(Lista *l){
-    printf("tam = %d\n", l->tam);
+
+void LiberaLista(Lista *l){
+    PonteiroCelula temp;
+    PonteiroCelula aux;
+
+    aux=l->ult;
     int i;
-    if(l->tam > 0){
-        for(i=1;i<=l->tam;i++){
-        printf("c[%d] = %c\n",i, ListaRetorna(l, i));
-        }
+    for(i=0;i<=l->tam;i++){
+        temp = aux;
+        aux=aux->prox;
+        free(temp);
+    }
+
+}
+
+void Imprime(Lista *l){
+    int i;
+    for(i=1;i<=l->tam;i++){
+        printf("%c",ListaRetorna(l,i));
     }
 }
 
@@ -162,22 +181,54 @@ int main()
     Lista l;
     ListaCria(&l);
 
+    char c[MAX];
+    int j;
+
+    scanf(" %[^\n]", c);
+
+    j=1;
+
+    char* ponteiro;
+
+    for(ponteiro=c ;ponteiro<c+strlen(c);ponteiro++){
+        switch(*ponteiro){
+            case '-':
+                if(j!=1){
+                    j--;
+                    ListaRemove(&l,j);
+                }
+
+                break;
+            case '<':
+                if(j>1)
+                    j--;
+                break;
+            case '>':
+                if(j<l.tam)
+                    j++;
+                break;
+            case '[':
+                j=1;
+                break;
+            case ']':
+                j=l.tam+1;
+                break;
+            default:
+
+                ListaInsere(&l,*ponteiro, j);
+                j++;
+                break;
+        }
+
+    }
+
+
+
+
 
     Imprime(&l);
 
-    ListaInsere(&l, 'c', 1);
-    Imprime(&l);
-
-    ListaInsere(&l, 'd', 1);
-    Imprime(&l);
-
-    ListaInsere(&l, 'f', 1);
-    Imprime(&l);
-
-
-
-
-
+    LiberaLista(&l);
 
     return 0;
 }
